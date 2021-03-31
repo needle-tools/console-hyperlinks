@@ -81,6 +81,9 @@ namespace Needle
 					}
 					else
 					{
+						// skip bridge
+						if (typeof(MethodBridge).IsAssignableFrom(t)) continue;
+						
 						if(t.IsClass && !t.IsAbstract && t.GetConstructors().Any(c => c.GetParameters().Length <= 0))
 							RegisterClickedCallback(Activator.CreateInstance(t) as IHyperlinkCallbackReceiver); 
 					}
