@@ -4,48 +4,58 @@ using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Needle
 {
 	public static class ConsoleHyperlink
 	{
-		/// <summary>
-		/// return true if callback is handled and should stop iteration
-		/// </summary>
-		public delegate bool ClickedCallback(string path, string line);
-
+		public static string LinkTo(this string text, string link)
+		{
+			return "<a href=\"" + link + "\">" + text + "</a>";
+		}
+		
 		/// <summary>
 		/// register hyperlink clicked handler
 		/// </summary>
-		/// <param name="callback">callback invoked when hyperlink clicked</param>
+		/// <param name="receiver">callback invoked when hyperlink clicked</param>
 		/// <param name="priority">higher priority is called first</param>
-		public static void RegisterClickedCallback(ClickedCallback callback, int priority)
+		public static void RegisterClickedCallback(IHyperlinkCallbackReceiver receiver, int priority = 0)
 		{
-			registered.Add((priority, callback));
+			if (receiver == null) return;
+			var existing = registered.FirstOrDefault(e => e.receiver == receiver);
+			if (existing.receiver != null)
+			{
+				existing.receiver = receiver;
+				existing.priority = priority;
+			}
+			else
+			{
+				registered.Add((priority, receiver));
+			}
 			dirty = true;
 		}
 
-		private static List<(int priority, ClickedCallback callback)> registered = new List<(int priority, ClickedCallback callback)>();
+		public static void UnregisterCallback(IHyperlinkCallbackReceiver receiver)
+		{
+			if (receiver == null) return;
+			registered.RemoveAll(e => e.receiver == receiver);
+		}
+
+		private static List<(int priority, IHyperlinkCallbackReceiver receiver)> registered = new List<(int priority, IHyperlinkCallbackReceiver receiver)>();
 		private static bool dirty;
 
 		private static void EnsureCallbacksOrdered()
 		{
 			if (!dirty) return;
-			registered = registered.OrderByDescending(p => p.priority).ToList();
+			registered = registered.OrderBy(p => p.priority).ToList();
 			dirty = false;
 		}
 
 		[InitializeOnLoadMethod]
 		private static void Init()
 		{
-			// Debug.Log("My Log) (at www.unity.com:0)");
-			// Debug.Log("My Log) (at https://google.de:0)");
-			// Debug.Log("My Log) (at https://www.google.de:0)");
-			// Debug.Log("My Log) (at http://www.google.de:0)");
-			// Debug.Log("<a href=\"http://www.google.com\">My Link</a>");
-			Debug.Log("<a href=\"print_time\">Print Time</a>");
-			// Debug.Log("My Log) (at C:/git/needle-packages-master/development/debughelpers/README.md)");
-			
+			// subscribe to unity event
 			var evt = typeof(EditorGUI).GetEvent("hyperLinkClicked", BindingFlags.Static | BindingFlags.NonPublic);
 			if (evt != null)
 			{
@@ -55,6 +65,39 @@ namespace Needle
 					var handler = Delegate.CreateDelegate(evt.EventHandlerType, method);
 					evt.AddMethod.Invoke(null, new object[] {handler});
 				}
+			}
+			
+			// register types that implement interface
+			var implementations = TypeCache.GetTypesDerivedFrom<IHyperlinkCallbackReceiver>();
+			foreach (var t in implementations)
+			{
+				try
+				{
+					if (typeof(Object).IsAssignableFrom(t))
+					{
+						var instances = Object.FindObjectsOfType(t);
+						foreach(var inst in instances)
+							RegisterClickedCallback(inst as IHyperlinkCallbackReceiver); 
+					}
+					else
+					{
+						if(t.IsClass && !t.IsAbstract && t.GetConstructors().Any(c => c.GetParameters().Length <= 0))
+							RegisterClickedCallback(Activator.CreateInstance(t) as IHyperlinkCallbackReceiver); 
+					}
+				}
+				catch(Exception e)
+				{
+					Debug.LogException(e);
+				}
+			}
+
+			var methods = TypeCache.GetMethodsWithAttribute<HyperlinkCallback>();
+			foreach (var m in methods)
+			{
+				if (!m.IsStatic) continue;
+				var wrapper = new MethodBridge(m);
+				var attribute = m.GetCustomAttribute<HyperlinkCallback>();
+				RegisterClickedCallback(wrapper, attribute.Priority);
 			}
 		}
 
@@ -75,40 +118,37 @@ namespace Needle
 				{
 					infos.TryGetValue("line", out var line);
 					EnsureCallbacksOrdered();
-					foreach (var cb in registered)
+					for (var index = registered.Count - 1; index >= 0; index--)
 					{
-						var res = cb.callback?.Invoke(path, line) ?? false;
+						var (_, receiver) = registered[index];
+						if (receiver == null || (receiver is Object obj && !obj))
+						{
+							registered.RemoveAt(index);
+							continue;
+						}
+						var res = receiver?.OnHyperlinkClicked(path, line) ?? false;
 						if (res) break;
 					}
 				}
 			}
 		}
+		
 
-		[InitializeOnLoadMethod]
-		private static void URLCallback()
+		private class MethodBridge : IHyperlinkCallbackReceiver
 		{
-			RegisterClickedCallback((path, line) =>
-			{
-				if(path == "print_time") Debug.Log(DateTime.Now);
-				
-				if (path.StartsWith("www."))
-				{
-					// Debug.Log("Open " + path);
-					Application.OpenURL(path);
-				}
-				
-				var result = Uri.TryCreate(path, UriKind.Absolute, out var uriResult) 
-				             && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
-				
-				if (result)
-				{
-					var url = uriResult.ToString();
-					// Debug.Log("Open " + url);
-					Application.OpenURL(url);
-				}
+			private readonly MethodInfo method;
 
-				return result;
-			}, 0);
+			public MethodBridge(MethodInfo method)
+			{
+				this.method = method;
+			}
+			
+			public bool OnHyperlinkClicked(string path, string line)
+			{
+				var res = method?.Invoke(null, new object[]{path, line});
+				if (res is bool boolResult) return boolResult;
+				return false;
+			}
 		}
 	}
 }
