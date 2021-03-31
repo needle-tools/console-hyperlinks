@@ -1,0 +1,13 @@
+{
+	"displayName": "Console Hyperlinks",
+	"name": "com.needle.console-hyperlinks",
+	"version": "0.0.1-pre",
+	"unity": "2020.2",
+	"description": "Add support for custom console hyperlinks",
+	"author": {
+		"name": "Needle",
+		"email": "contact@needle.tools",
+		"url": "https://needle.tools"
+	  },
+	"category": "Libraries"
+}

@@ -1,0 +1,16 @@
+{
+    "name": "needle.ConsoleHyperlinks.Editor",
+    "rootNamespace": "Needle.ConsoleHyperlinks",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
