@@ -5,7 +5,7 @@ namespace Needle
 {
 	public class OpenURLCallback
 	{
-		[HyperlinkCallback]
+		[HyperlinkCallback(Priority = -1)]
 		// ReSharper disable once UnusedMember.Local
 		private static bool OnHyperlinkClicked(string path, string line)
 		{
