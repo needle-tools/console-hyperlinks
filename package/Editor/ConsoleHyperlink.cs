@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace Needle.ConsoleHyperlinks
+namespace Needle
 {
 	public static class ConsoleHyperlink
 	{
@@ -38,10 +38,12 @@ namespace Needle.ConsoleHyperlinks
 		[InitializeOnLoadMethod]
 		private static void Init()
 		{
-			Debug.Log("My Log) (at www.unity.com:0)");
-			Debug.Log("My Log) (at https://google.de:0)");
-			Debug.Log("My Log) (at https://www.google.de:0)");
-			Debug.Log("My Log) (at http://www.google.de:0)");
+			// Debug.Log("My Log) (at www.unity.com:0)");
+			// Debug.Log("My Log) (at https://google.de:0)");
+			// Debug.Log("My Log) (at https://www.google.de:0)");
+			// Debug.Log("My Log) (at http://www.google.de:0)");
+			// Debug.Log("<a href=\"http://www.google.com\">My Link</a>");
+			Debug.Log("<a href=\"print_time\">Print Time</a>");
 			// Debug.Log("My Log) (at C:/git/needle-packages-master/development/debughelpers/README.md)");
 			
 			var evt = typeof(EditorGUI).GetEvent("hyperLinkClicked", BindingFlags.Static | BindingFlags.NonPublic);
@@ -87,6 +89,8 @@ namespace Needle.ConsoleHyperlinks
 		{
 			RegisterClickedCallback((path, line) =>
 			{
+				if(path == "print_time") Debug.Log(DateTime.Now);
+				
 				if (path.StartsWith("www."))
 				{
 					// Debug.Log("Open " + path);
