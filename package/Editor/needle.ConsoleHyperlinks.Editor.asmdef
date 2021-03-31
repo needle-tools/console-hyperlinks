@@ -1,6 +1,6 @@
 {
     "name": "needle.ConsoleHyperlinks.Editor",
-    "rootNamespace": "Needle.ConsoleHyperlinks",
+    "rootNamespace": "Needle",
     "references": [],
     "includePlatforms": [
         "Editor"
