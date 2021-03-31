@@ -140,15 +140,18 @@ namespace Needle
 		private class MethodBridge : IHyperlinkCallbackReceiver
 		{
 			private readonly MethodInfo method;
+			private bool pathOnly;
 
 			public MethodBridge(MethodInfo method)
 			{
 				this.method = method;
+				var para = this.method.GetParameters();
+				pathOnly = para.Length == 1;
 			}
 			
 			public bool OnHyperlinkClicked(string path, string line)
 			{
-				var res = method?.Invoke(null, new object[]{path, line});
+				var res = pathOnly ?method?.Invoke(null, new object[]{path}) : method?.Invoke(null, new object[]{path, line});
 				if (res is bool boolResult) return boolResult;
 				return false;
 			}
