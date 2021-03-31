@@ -20,7 +20,7 @@
 2) Add the folder named "package" to your project in Package Manager via local file path ``"com.needle.console-hyperlinks": "file:path/to/cloned/repo/package"``). 
 
 ## How To Use 💡
-Please open the <a href="https://github.com/needle-tools/selective-profiling/blob/main/package/Readme.md">Package Readme</a> for more information.
+Please open the <a href="https://github.com/needle-tools/console-hyperlinks/blob/main/package/Readme.md">Package Readme</a> for more information.
 
 ## Contact ✒️
 <b>[🌵 needle — tools for unity](https://needle.tools)</b> • 
