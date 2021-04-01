@@ -1,0 +1,15 @@
+{
+  "displayName": "Console Hyperlinks Extras",
+  "name": "com.needle.console-hyperlinks.extras",
+  "version": "1.0.0",
+  "unity": "2020.2",
+  "description": "Dev",
+  "author": {
+    "name": "Needle",
+    "email": "contact@needle.tools",
+    "url": "https://needle.tools"
+  },
+  "category": "Libraries",
+  "dependencies": {
+  }
+}

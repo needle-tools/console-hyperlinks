@@ -1,0 +1,17 @@
+{
+    "name": "needle.ConsoleHyperlinks.Extras",
+    "rootNamespace": "Needle",
+    "references": [
+        "GUID:00c4fb68fddcee94797ca2106fdfc900",
+        "GUID:1f05d6fd4e046a242b53b6aeab4c98ab"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,15 +1,17 @@
 {
-    "name": "needle.ConsoleHyperlinks",
+    "name": "needle.ConsoleHyperlinks.Extras.Editor",
     "rootNamespace": "Needle",
     "references": [
         "GUID:00c4fb68fddcee94797ca2106fdfc900"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": true,
+    "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": false,
+    "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false
