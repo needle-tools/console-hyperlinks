@@ -11,9 +11,7 @@
    private static bool OnHyperlinkClicked(string path, string line)
    ```
 
-2) That's it. Now when you log something to the console using the following pattern you will receive a callback: ``<a href=\"My callback string">My clickable link</a>``. 
-   
-   You can also just use the handy ``LinkTo(string url)`` extension method like this: ``"Open Unity Website".LinkTo("https://www.unity.com")``
+2) That's it. Now when you log something to the console using the following pattern you will receive a callback: ``<a href=\"My callback string">My clickable link</a>``. You can also just use the handy ``LinkTo(string url)`` extension method like this: ``"Open Unity Website".LinkTo("https://www.unity.com")``
 
 
 ## Extensible 🧩
@@ -21,6 +19,9 @@ Of course you can implement anything you like as a link. A default implementatio
 
 **For example**: add support to frame objects by clicking a link in a console message
 ![](Documentation~/frame.gif)
+
+## Supports
+- Unity 2019.4 and above
 
 
 ## Contact ✒️
