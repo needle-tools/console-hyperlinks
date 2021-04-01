@@ -1,0 +1,1 @@
+this is some external file that should be opened by OS default editor via console hyperlink
