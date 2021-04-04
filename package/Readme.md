@@ -20,8 +20,11 @@ Of course you can implement anything you like as a link. A default implementatio
 **For example**: add support to frame objects by clicking a link in a console message
 ![](Documentation~/frame.gif)
 
-## Supports
-- Unity 2019.4 and above
+## Unity Versions ✔️
+Tested with Unity 2019.4 and above
+
+## Support 💚
+This project is supported via donations. If you or your team have found it useful, please consider supporting further development through [patreon](https://www.patreon.com/needletools)
 
 
 ## Contact ✒️
