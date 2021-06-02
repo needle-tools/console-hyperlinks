@@ -56,6 +56,12 @@ namespace Needle
 		private static void Init()
 		{
 			// subscribe to unity event
+			#if UNITY_2021_2_OR_NEWER
+			EditorGUI.hyperLinkClicked += (_, args) =>   
+			{
+				OnProcessClickData(args.hyperLinkData); 
+			};
+			#else
 			var evt = typeof(EditorGUI).GetEvent("hyperLinkClicked", BindingFlags.Static | BindingFlags.NonPublic);
 			if (evt != null)
 			{
@@ -66,6 +72,7 @@ namespace Needle
 					evt.AddMethod.Invoke(null, new object[] {handler});
 				}
 			}
+			#endif
 			
 			// register types that implement interface
 			var implementations = TypeCache.GetTypesDerivedFrom<IHyperlinkCallbackReceiver>();
@@ -103,9 +110,10 @@ namespace Needle
 				RegisterClickedCallback(wrapper, attribute.Priority);
 			}
 		}
-
+		
+		// old versions require reflection here
+		
 		private static PropertyInfo property;
-
 		// ReSharper disable once UnusedMember.Local
 		private static void OnClicked(object sender, EventArgs args)
 		{
@@ -117,22 +125,27 @@ namespace Needle
 
 			if (property.GetValue(args) is Dictionary<string, string> infos)
 			{
-				if (infos.TryGetValue("href", out var path))
+				OnProcessClickData(infos);
+			}
+		}
+
+		// newer versions 2021.x (?, 2 alpha) does not anymore
+		private static void OnProcessClickData(Dictionary<string, string> infos)
+		{
+			if (infos == null) return;
+			if (!infos.TryGetValue("href", out var path)) return;
+			infos.TryGetValue("line", out var line);
+			EnsureCallbacksOrdered();
+			for (var index = registered.Count - 1; index >= 0; index--)
+			{
+				var (_, receiver) = registered[index];
+				if (receiver == null || (receiver is Object obj && !obj))
 				{
-					infos.TryGetValue("line", out var line);
-					EnsureCallbacksOrdered();
-					for (var index = registered.Count - 1; index >= 0; index--)
-					{
-						var (_, receiver) = registered[index];
-						if (receiver == null || (receiver is Object obj && !obj))
-						{
-							registered.RemoveAt(index);
-							continue;
-						}
-						var res = receiver?.OnHyperlinkClicked(path, line) ?? false;
-						if (res) break;
-					}
+					registered.RemoveAt(index);
+					continue;
 				}
+				var res = receiver?.OnHyperlinkClicked(path, line) ?? false;
+				if (res) break;
 			}
 		}
 		

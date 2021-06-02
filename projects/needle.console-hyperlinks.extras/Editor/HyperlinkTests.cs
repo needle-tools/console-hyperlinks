@@ -11,6 +11,7 @@ namespace Needle
 			Debug.Log("Here is a log: " + "Open Needle Website".LinkTo("http://www.needle.tools"));
 			Debug.Log("<a href=\"http://www.google.com\">My Link</a>");
 			Debug.Log("Open external file".LinkTo("../SomeExternalFile.md"));
+			Debug.Log("<a href=\"www.google.com\">google</a>"); 
 		}
 	}
 }
