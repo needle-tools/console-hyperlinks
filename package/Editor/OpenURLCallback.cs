@@ -32,8 +32,7 @@ namespace Needle
 			// if the path is not an url but some external file path open if with default app
 			if (File.Exists(path))
 			{
-				int.TryParse(line, out var pathLine);
-                if (CodeEditor.CurrentEditor.OpenProject(path, pathLine))
+                if (int.TryParse(line, out var fileLine) && CodeEditor.CurrentEditor.OpenProject(path, fileLine))
                 {
                     return true;
                 }
