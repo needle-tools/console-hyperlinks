@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using Unity.CodeEditor;
 using UnityEngine;
 
 namespace Needle
@@ -9,7 +10,7 @@ namespace Needle
 	{
 		[HyperlinkCallback(Priority = -1)]
 		// ReSharper disable once UnusedMember.Local
-		private static bool OnHyperlinkClicked(string path)
+		private static bool OnHyperlinkClicked(string path, string line)
 		{
 			if (path.StartsWith("www."))
 			{
@@ -31,6 +32,11 @@ namespace Needle
 			// if the path is not an url but some external file path open if with default app
 			if (File.Exists(path))
 			{
+                if (int.TryParse(line, out var fileLine) && CodeEditor.CurrentEditor.OpenProject(path, fileLine))
+                {
+                    return true;
+                }
+
 				var absolute = Path.GetFullPath(path);
 				var isExternalPath = !absolute.StartsWith(Application.dataPath);
 				if (isExternalPath)
